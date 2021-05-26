@@ -12,77 +12,25 @@ int16_t HC12_rcData[RC_CHANS];
 
 NeoSWSerial HC12(7, 8);
 
-//HC12Data HC12_Data; // <---
-//HC12Payload HC12_Payload; // <---
-//extern HC12Payload HC12_Payload; //<---
 unsigned long lastReceiveTime = 0, lastRunTime = 0;
 const char delimiter = ',';
 byte boundLow;
 byte boundHigh;
 String input;
 
-int throttle;
-int yaw;
-int pitch;
-int roll;
-int aux1;
-int aux2;
-
-/*
-void resetHC12Data() 
-{
-  HC12_Data.throttle = 512;
-  HC12_Data.yaw = 512;
-  HC12_Data.pitch = 512;
-  HC12_Data.roll = 512;
-  HC12_Data.aux1 = 0;
-  HC12_Data.aux2 = 0;
-  HC12_Data.switches = 0;
-}
-*/
-
-void resetHC12Data() 
-{
-  throttle = 512;
-  yaw = 512;
-  pitch = 512;
-  roll = 512;
-  aux1 = 0;
-  aux2 = 0;
-  //HC12_Data.switches = 0; //<---
-}
-
-/*
-void resetHC12Payload() 
-{
-  HC12_Payload.lat = 0;
-  HC12_Payload.lon = 0;
-  HC12_Payload.heading = 0;
-  HC12_Payload.pitch = 0;
-  HC12_Payload.roll = 0;
-  HC12_Payload.alt = 0;
-  HC12_Payload.flags = 0;
-}
-*/
+int throttle = 0;
+int yaw = 512;
+int pitch = 512;
+int roll = 512;
+int aux1 = 1;
+int aux2 = 0;
 
 void HC12_Init() {
-  resetHC12Data();
-  //resetHC12Payload(); //<---
   HC12.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
-void HC12_Read_RC() {
-  /*
-  HC12_Payload.lat = 35.62;
-  HC12_Payload.lon = 139.68;
-  HC12_Payload.heading = att.heading;
-  HC12_Payload.pitch = att.angle[PITCH];
-  HC12_Payload.roll = att.angle[ROLL];
-  HC12_Payload.alt = alt.EstAlt;
-  memcpy(&HC12_Payload.flags, &f, 1); // first byte of status flags
-  */
-	
+void HC12_Read_RC() {	
   unsigned long currentTime = millis();
   if((currentTime - lastRunTime) >= 100){
     int numDelimiter = 0;
@@ -93,15 +41,24 @@ void HC12_Read_RC() {
           numDelimiter++;
         }
       }
-      //Serial.print(numDelimiter); //<---
-      //Serial.print("\t"); //<---
       if(numDelimiter == 5){
         //Serial.println(input); //<---
         lastReceiveTime = millis();
       
         boundLow = input.indexOf(delimiter);
-        throttle = input.substring(0, boundLow).toInt();
-      
+        int throttle_det = input.substring(0, boundLow).toInt();
+        if(throttle_det >= 600){
+          if(throttle <= 1013){
+            throttle += 10;
+          }
+        }
+
+        if(throttle_det <= 424){
+          if(throttle >= 10){
+            throttle -= 10;
+          }
+        }
+        
         boundHigh = input.indexOf(delimiter, boundLow+1);
         yaw = input.substring(boundLow+1, boundHigh).toInt();
       
@@ -115,18 +72,19 @@ void HC12_Read_RC() {
         aux1 = input.substring(boundHigh+1, boundLow).toInt();
     
         aux2 = input.substring(boundLow+1).toInt();
-
-        HC12_rcData[THROTTLE] = map(throttle, 0, 1023, 1000, 2000);
-        HC12_rcData[ROLL] = map(yaw, 0, 1023, 1000, 2000);
-        HC12_rcData[PITCH] = map(pitch, 0, 1023, 1000, 2000);
-        HC12_rcData[YAW] = map(roll, 0, 1023, 1000, 2000);
-        HC12_rcData[AUX1] = map(aux1, 0, 1, 2000, 1000);
-        HC12_rcData[AUX2] = 1000;
       }   
     }
     currentTime = millis();
     if (currentTime - lastReceiveTime > 1000) {
       digitalWrite(LED_BUILTIN, HIGH);
+      if(throttle > 1){
+        throttle -= 2;
+      }
+      yaw = 512;
+      pitch = 512;
+      roll = 512;
+      aux1 = 1;
+      aux2 = 0;
       //Serial.println("Connection Lost"); //<---
     }
     else{
@@ -134,6 +92,12 @@ void HC12_Read_RC() {
       HC12.println("OK");
     }
     lastRunTime = millis();
-  } 
+    HC12_rcData[THROTTLE] = map(throttle, 0, 1023, 1000, 2000);
+    HC12_rcData[YAW] = map(yaw, 0, 1023, 1000, 2000);
+    HC12_rcData[PITCH] = map(pitch, 0, 1023, 1000, 2000);
+    HC12_rcData[ROLL] = map(roll, 0, 1023, 1000, 2000);
+    HC12_rcData[AUX1] = map(aux1, 0, 1, 2000, 1000);
+    HC12_rcData[AUX2] = 1000;
+  }
 }
 #endif

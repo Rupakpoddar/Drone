@@ -1,5 +1,4 @@
 #include <NeoSWSerial.h>
-//#include <Wire.h>
 
 NeoSWSerial HC12(7, 8);
 
@@ -9,7 +8,7 @@ byte boundLow;
 byte boundHigh;
 String input;
 
-int throttle = 512;
+int throttle = 0;
 int yaw = 512;
 int pitch = 512;
 int roll = 512;
@@ -37,11 +36,22 @@ void loop() {
       //Serial.print(numDelimiter);
       //Serial.print("\t");
       if(numDelimiter == 5){
-        Serial.println(input);
+        //Serial.println(input);
         lastReceiveTime = millis();
       
         boundLow = input.indexOf(delimiter);
-        throttle = input.substring(0, boundLow).toInt();
+        int throttle_det = input.substring(0, boundLow).toInt();
+        if(throttle_det >= 600){
+          if(throttle <= 1013){
+            throttle += 10;
+          }
+        }
+
+        if(throttle_det <= 424){
+          if(throttle >= 10){
+            throttle -= 10;
+          }
+        }
       
         boundHigh = input.indexOf(delimiter, boundLow+1);
         yaw = input.substring(boundLow+1, boundHigh).toInt();
@@ -61,7 +71,15 @@ void loop() {
     currentTime = millis();
     if (currentTime - lastReceiveTime > 1000) {
       digitalWrite(LED_BUILTIN, HIGH);
-      Serial.println("Connection Lost");
+      if(throttle > 1){
+        throttle -= 2;
+      }
+      yaw = 512;
+      pitch = 512;
+      roll = 512;
+      aux1 = 1;
+      aux2 = -1;
+      Serial.println("\nConnection Lost\n");
       //delay(100);
     }
     else{
@@ -70,5 +88,16 @@ void loop() {
       //delay(100);
     }
     lastRunTime = millis();
+    Serial.print(throttle);
+    Serial.print(",");
+    Serial.print(yaw);
+    Serial.print(",");
+    Serial.print(pitch);
+    Serial.print(",");
+    Serial.print(roll);
+    Serial.print(",");
+    Serial.print(aux1);
+    Serial.print(",");
+    Serial.println(aux2);
   }
 }

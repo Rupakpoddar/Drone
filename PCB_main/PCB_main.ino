@@ -1,7 +1,5 @@
 #include <Adafruit_SSD1306.h>
-#include <Fonts/FreeMonoBold9pt7b.h>
-#include <SoftwareSerial.h>
-#include <Wire.h>
+#include <NeoSWSerial.h>
 #include "bitmap.h"
 #define LEDBUILTIN 13
 #define THROTTLE A0
@@ -12,7 +10,7 @@
 #define AUX2 6
 #define PADDING 10
 
-SoftwareSerial HC12(3, 2);
+NeoSWSerial HC12(3, 2);
 Adafruit_SSD1306 display(128, 64);
 
 unsigned long lastReceiveTime = 0;
@@ -26,14 +24,13 @@ int aux1 = 1;
 int aux2 = -1;
 
 void setup() {
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  
-  display.setFont(&FreeMonoBold9pt7b);
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
   display.setTextColor(WHITE);
   display.setTextWrap(true);
   display.drawBitmap(0, 0, bootlogo, 128, 64, WHITE);
   display.display();
-  delay(1000);  
+  delay(1000);
 
   pinMode(THROTTLE, INPUT);
   pinMode(YAW, INPUT);
