@@ -1,0 +1,41 @@
+*Pick And Place List
+*Company=
+*Author=
+*eMail=
+*
+*Project=HC12_Transmitter
+*Date=18:00:07
+*CreatedBy=Fritzing 0.9.3b.04.19.5c895d327c44a3114e5fcc9d8260daf0cbb52806
+*
+*
+*Coordinates in mm, always center of component
+*Origin 0/0=Lower left corner of PCB
+*Rotation in degree (0-360, math. pos.)
+*
+*No;Value;Package;X;Y;Rotation;Side;Name
+1;;;34.8354;-11.5319;0;Bottom;Via2
+2;;THT;64.0454;-52.1719;-90;Bottom;J2
+3;;;10.8465;-41.1653;0;Bottom;TXT6
+4;;;67.8554;-19.1519;0;Bottom;Via6
+5;;;57.6954;-3.91195;0;Bottom;Via1
+6;;;1.67424;-24.9375;90;Bottom;TXT5
+7;;;47.9065;-51.3958;0;Bottom;TXT8
+8;;;76.322;-37.9197;90;Bottom;TXT10
+9;;THT;27.2154;-47.0919;-180;Bottom;J1
+10;;;72.9354;-19.1519;0;Bottom;Via4
+11;;joystick;66.5854;-13.2464;-90;Bottom;U1
+12;;;60.2354;-31.8519;0;Bottom;Via3
+13;5V;to-220-alt;17.919;-34.3919;90;Bottom;IC1
+14;;;76.3582;-3.34595;1;Bottom;TXT3
+15;;;25.3158;-24.3025;0;Bottom;TXT9
+16;;;55.1554;-6.45195;0;Bottom;Via7
+17;;;42.4554;-29.3119;0;Bottom;Via8
+18;;THT;4.35535;-33.1219;-180;Bottom;Input
+19;;joystick;13.2454;-13.2464;-90;Bottom;U2
+20;;;36.2465;-35.2386;-90;Bottom;TXT2
+21;;;3.61347;-3.77237;0.999999;Bottom;TXT3
+22;;;62.7754;-34.3919;0;Bottom;Via5
+23;;;74.6287;-52.0308;0;Bottom;TXT1
+24;;;39.9154;-31.8519;0;Bottom;Arduino
+25;;;10.5642;-47.7975;0;Bottom;TXT7
+26;;;1.95646;-39.6131;0;Bottom;TXT4
